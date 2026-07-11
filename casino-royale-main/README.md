@@ -1,5 +1,8 @@
 # CasinoDesk v3
 
+El resumen completo de las ocho fases de implementacion se encuentra en
+[`docs/IMPLEMENTATION_PHASES_REPORT.md`](docs/IMPLEMENTATION_PHASES_REPORT.md).
+
 Migracion del prototipo original a una base full-stack con:
 
 - `apps/frontend`: React + TypeScript + Vite
