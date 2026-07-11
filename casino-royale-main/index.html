@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CasinoDesk - Sistema de Compliance AML/CFT</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- ==================== LOGIN PAGE ==================== -->
+    <div id="loginPage" class="login-container">
+        <div class="login-card">
+            <div class="login-logo">
+                <div class="login-logo__icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1A1A1F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="3" y1="9" x2="21" y2="9"></line>
+                        <line x1="9" y1="21" x2="9" y2="9"></line>
+                    </svg>
+                </div>
+                <h1 class="login-logo__title text-gold">CasinoDesk</h1>
+                <p class="login-logo__subtitle">Sistema de Compliance AML/CFT</p>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label" for="loginUser">Usuario</label>
+                    <input type="text" class="form-input" id="loginUser" placeholder="Ingrese su usuario" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="loginPass">Contraseña</label>
+                    <input type="password" class="form-input" id="loginPass" placeholder="Ingrese su contraseña" required>
+                </div>
+                <button type="submit" class="btn btn--primary" style="width: 100%; margin-top: 16px;">
+                    Iniciar Sesión
+                </button>
+            </form>
+            <p style="text-align: center; margin-top: 16px; font-size: 0.875rem;">
+                <a href="#">¿Olvidó su contraseña?</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- ==================== MAIN APP ==================== -->
+    <div id="mainApp" class="hidden">
+        <!-- Header -->
+        <header class="header">
+            <div class="header__logo">
+                <div class="header__logo-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1A1A1F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="3" y1="9" x2="21" y2="9"></line>
+                        <line x1="9" y1="21" x2="9" y2="9"></line>
+                    </svg>
+                </div>
+                <span class="header__logo-text">CasinoDesk</span>
+            </div>
+            
+            <div class="header__spacer"></div>
+            
+            <div class="header__info">
+                <div class="header__box-selector">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    </svg>
+                    <span>CAJA-01</span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+                
+                <div class="header__user">
+                    <div class="header__user-avatar">YR</div>
+                    <div class="header__user-info">
+                        <span class="header__user-name">Jose Ramos</span>
+                        <span class="header__user-role">Operador</span>
+                    </div>
+                </div>
+                
+                <div class="header__clock" id="clock">22:54</div>
+                
+                <div class="header__shortcuts">
+                    <button class="btn btn--shortcut" onclick="openModal('buyinModal')">F1 Buy-in</button>
+                    <button class="btn btn--shortcut" onclick="openModal('cashoutModal')">F2 Cash-out</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <ul class="sidebar__nav">
+                <li class="sidebar__section">
+                    <span class="sidebar__section-title">Operación</span>
+                    <button class="sidebar__item active" data-page="operaciones" onclick="showPage('operaciones')" type="button">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        <span>Inicio del turno</span>
+                    </button>
+                    <button class="sidebar__item" data-page="buyin" onclick="openModal('buyinModal')" type="button">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                        <span>Buy-in</span>
+                    </button>
+                    <button class="sidebar__item" data-page="cashout" onclick="openModal('cashoutModal')" type="button">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                            <line x1="1" y1="10" x2="23" y2="10"></line>
+                        </svg>
+                        <span>Cash-out</span>
+                    </button>
+                </li>
+                
+                <li class="sidebar__section">
+                    <span class="sidebar__section-title">Gestión</span>
+                    <button class="sidebar__item" data-page="cliente" onclick="showPage('cliente')" type="button">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        <span>Sesión del cliente</span>
+                    </button>
+                    <button class="sidebar__item" data-page="historial" onclick="showPage('historial')" type="button">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        <span>Historial del turno</span>
+                    </button>
+                </li>
+                
+                <li class="sidebar__section">
+                    <span class="sidebar__section-title">Cumplimiento</span>
+                    <button class="sidebar__item" data-page="oficial" onclick="switchUser('oficial')" type="button">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                        <span>Dashboard Oficial</span>
+                    </button>
+                    <div class="sidebar__item" data-page="alertas">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        <span>Alertas</span>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Stats Turno -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-card__header">
+                        <div class="stat-card__icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="1" x2="12" y2="23"></line>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                            </svg>
+                        </div>
+                        <span class="stat-card__label">Efectivo en Caja</span>
+                    </div>
+                    <div class="stat-card__value text-gold">$28,540</div>
+                    <div class="stat-card__subtext">Apertura $20,000 + $8,540</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-card__header">
+                        <div class="stat-card__icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                            </svg>
+                        </div>
+                        <span class="stat-card__label">Transacciones</span>
+                    </div>
+                    <div class="stat-card__value">37</div>
+                    <div class="stat-card__subtext">24 buy-in · 13 cash-out</div>
+                </div>
+                
+                <div class="stat-card stat-card--alert">
+                    <div class="stat-card__header">
+                        <div class="stat-card__icon" style="background: rgba(245, 158, 11, 0.2); color: var(--status-yellow);">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            </svg>
+                        </div>
+                        <span class="stat-card__label">Alertas Turno</span>
+                    </div>
+                    <div class="stat-card__value text-warning">2</div>
+                    <div class="stat-card__subtext">1 PEP · 1 OFAC bloqueada</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-card__header">
+                        <div class="stat-card__icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                        </div>
+                        <span class="stat-card__label">Clientes Únicos</span>
+                    </div>
+                    <div class="stat-card__value">22</div>
+                    <div class="stat-card__subtext">3 con KYC esta sesión</div>
+                </div>
+            </div>
+
+            <!-- Semáforo Global -->
+            <div class="semaphore">
+                <div class="semaphore__indicator semaphore__indicator--green"></div>
+                <div class="semaphore__label">Sistema OK</div>
+                <div class="semaphore__status">APIS AML EN LÍNEA</div>
+                <div style="margin-left: auto; display: flex; gap: 16px;">
+                    <span class="badge badge--green">OFAC OK</span>
+                    <span class="badge badge--green">PEP OK</span>
+                    <span class="badge badge--green">ONLINE</span>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="action-btn" onclick="openModal('buyinModal')">
+                    <div class="action-btn__icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                    </div>
+                    <div class="action-btn__title">Buy-in</div>
+                    <div class="action-btn__shortcut">Compra de fichas · F1</div>
+                </button>
+                
+                <button class="action-btn" onclick="openModal('cashoutModal')">
+                    <div class="action-btn__icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                            <line x1="1" y1="10" x2="23" y2="10"></line>
+                        </svg>
+                    </div>
+                    <div class="action-btn__title">Cash-out</div>
+                    <div class="action-btn__shortcut">Canje de tickets · F2</div>
+                </button>
+            </div>
+
+            <!-- Content Grid -->
+            <div class="grid grid--sidebar">
+                <!-- Historial Reciente -->
+                <div class="card">
+                    <div class="card__header">
+                        <h3 class="card__title">Últimas transacciones del turno</h3>
+                        <button class="btn btn--ghost">Ver todas</button>
+                    </div>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Hora</th>
+                                    <th>Tipo</th>
+                                    <th>Cliente</th>
+                                    <th>Monto</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactionsTable">
+                                <!-- Transactions will be populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Panel Lateral -->
+                <div>
+                    <!-- Acumulador -->
+                    <div class="alert-panel mb-xl">
+                        <div class="alert-panel__title">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                            </svg>
+                            Acumulador del Cliente
+                        </div>
+                        <div class="receipt">
+                            <div class="receipt__row">
+                                <span>Hash</span>
+                                <span class="font-mono" style="font-size: 0.75rem;">3c98..a5d1</span>
+                            </div>
+                            <div class="receipt__row">
+                                <span>R. Mendoza</span>
+                            </div>
+                            <div style="margin-top: 12px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span>Acumulado</span>
+                                    <span class="font-mono text-warning">$6,000 / $10,000</span>
+                                </div>
+                                <div style="background: var(--surface); height: 8px; border-radius: 4px; overflow: hidden;">
+                                    <div style="background: var(--status-yellow); height: 100%; width: 60%;"></div>
+                                </div>
+                                <div class="form-hint" style="margin-top: 8px;">
+                                    $4,000 restantes para activar RTE
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Alertas Rápidas -->
+                    <div class="alert-panel">
+                        <div class="alert-panel__title">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            </svg>
+                            Alertas Recientes
+                        </div>
+                        <ul class="alert-panel__list">
+                            <li class="alert-panel__item">
+                                <div class="alert-panel__indicator alert-panel__indicator--yellow"></div>
+                                <div class="alert-panel__content">
+                                    <div class="alert-panel__type text-warning">PEP Detectado</div>
+                                    <div class="alert-panel__detail">Alcaldesa de Chitré · $2,000</div>
+                                </div>
+                            </li>
+                            <li class="alert-panel__item">
+                                <div class="alert-panel__indicator alert-panel__indicator--red"></div>
+                                <div class="alert-panel__content">
+                                    <div class="alert-panel__type text-danger">Bloqueado OFAC</div>
+                                    <div class="alert-panel__detail">CAJA-02 · E. Antonio</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ==================== MODALS ==================== -->
+    
+    <!-- Buy-in Modal -->
+    <div id="buyinModal" class="modal-overlay">
+        <div class="modal" style="max-width: 700px;">
+            <div class="modal__header">
+                <h2 class="modal__title text-gold">Buy-in — Compra de fichas</h2>
+                <button class="modal__close" onclick="closeModal('buyinModal')">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal__body">
+                <p style="margin-bottom: 24px; color: var(--text-secondary);">
+                    KYC se activa automáticamente al superar <strong>$2,000</strong>.
+                </p>
+                
+                <!-- Step 1: Monto -->
+                <div id="buyinStep1">
+                    <h4 style="margin-bottom: 16px;">1. Monto e instrumento de pago</h4>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="buyinMonto">MONTO DE LA TRANSACCIÓN</label>
+                        <input type="text" class="form-input form-input--large" id="buyinMonto" placeholder="$ 0.00" oninput="formatCurrency(this)">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="buyinTipoBuy">TIPO DE TRANSACCIÓN</label>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" name="buyinTipo" id="buyinTipoBuy" value="BUY_IN" checked>
+                                <label class="radio-option__label" for="buyinTipoBuy">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="12" y1="1" x2="12" y2="23"></line>
+                                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                                    </svg>
+                                    Buy-in
+                                </label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" name="buyinTipo" id="buyinTipoCash" value="CASH_OUT">
+                                <label class="radio-option__label" for="buyinTipoCash">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                                        <line x1="1" y1="10" x2="23" y2="10"></line>
+                                    </svg>
+                                    Cash-out
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="buyinPayment">INSTRUMENTO DE PAGO</label>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" name="buyinInstr" id="buyinInstrEfectivo" value="EFECTIVO" checked>
+                                <label class="radio-option__label" for="buyinInstrEfectivo">Efectivo</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" name="buyinInstr" id="buyinInstrTarjeta" value="TARJETA">
+                                <label class="radio-option__label" for="buyinInstrTarjeta">Tarjeta</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" name="buyinInstr" id="buyinInstrTransferencia" value="TRANSFERENCIA">
+                                <label class="radio-option__label" for="buyinInstrTransferencia">Transferencia</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" name="buyinInstr" id="buyinInstrCheque" value="CHEQUE">
+                                <label class="radio-option__label" for="buyinInstrCheque">Cheque</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="buyinKycWarning" class="hidden" style="background: var(--accent-gold-dim); border: 1px solid var(--accent-gold); border-radius: 8px; padding: 16px; margin-bottom: 16px;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent-gold)" stroke-width="2">
+                                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                                <line x1="12" y1="9" x2="12" y2="13"></line>
+                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                            </svg>
+                            <div>
+                                <strong class="text-gold">KYC SE ACTIVA</strong>
+                                <p style="margin-top: 4px; font-size: 0.875rem;">Art. 53 - Ley 23/2015 · Requiere verificación de identidad</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 2: Identificación -->
+                <div id="buyinStep2" class="hidden">
+                    <h4 style="margin-bottom: 16px;">2. Identificación del cliente</h4>
+                    <p style="margin-bottom: 16px; font-size: 0.875rem; color: var(--text-secondary);">
+                        Art. 27 - Ley 81/2019 · Los campos se autocompletan al escanear el documento.
+                    </p>
+                    
+                    <div class="grid grid--2col mb-lg">
+                        <div class="form-group">
+                            <label class="form-label" for="buyinDoc">CÉDULA / PASAPORTE</label>
+                            <input type="text" class="form-input" id="buyinDoc" placeholder="8-712-2241">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="buyinNacionalidad">NACIONALIDAD</label>
+                            <input type="text" class="form-input" id="buyinNacionalidad" placeholder="Panameña">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="buyinNombre">NOMBRE COMPLETO</label>
+                        <input type="text" class="form-input" id="buyinNombre" placeholder="Carlos Andrés Núñez Pinilla">
+                    </div>
+                    
+                    <div class="grid grid--2col mb-lg">
+                        <div class="form-group">
+                            <label class="form-label" for="buyinFechaNac">FECHA DE NACIMIENTO</label>
+                            <input type="date" class="form-input" id="buyinFechaNac">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="buyinHash">HASH (Argon2id)</label>
+                            <input type="text" class="form-input font-mono" id="buyinHash" value="b88e...2741" readonly style="background: var(--surface);">
+                        </div>
+                    </div>
+                    
+                    <!-- Screening Result -->
+                    <div id="screeningResult" style="background: var(--surface); border-radius: 8px; padding: 16px; margin-top: 16px;">
+                        <h5 style="margin-bottom: 12px;">Screening</h5>
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                            <span class="badge badge--green">OFAC</span>
+                            <span class="badge badge--green">ONU</span>
+                            <span class="badge badge--green">UE</span>
+                            <span class="badge badge--green">PEP SSNF</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div class="semaphore__indicator semaphore__indicator--green"></div>
+                            <div>
+                                <strong class="text-success">Sin coincidencias</strong>
+                                <p style="font-size: 0.875rem; color: var(--text-secondary);">Continúe a confirmación</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 3: Confirmación -->
+                <div id="buyinStep3" class="hidden">
+                    <h4 style="margin-bottom: 16px;">3. Confirmar y entregar fichas</h4>
+                    
+                    <div class="receipt" style="margin-bottom: 16px;">
+                        <div class="receipt__header">
+                            <div class="receipt__title text-gold">CIERRE DE TRANSACCIÓN</div>
+                            <div class="receipt__id">TX-2026-04212</div>
+                        </div>
+                        <div class="receipt__row">
+                            <span>TIPO</span>
+                            <span id="confirmTipo">Buy-in</span>
+                        </div>
+                        <div class="receipt__row">
+                            <span>MONTO</span>
+                            <span class="text-gold" id="confirmMonto">$2,500.00</span>
+                        </div>
+                        <div class="receipt__row">
+                            <span>INSTRUMENTO</span>
+                            <span id="confirmInstr">Efectivo</span>
+                        </div>
+                        <div class="receipt__row">
+                            <span>CLIENTE</span>
+                            <span id="confirmCliente">R. Mendoza</span>
+                        </div>
+                        <div class="receipt__row">
+                            <span>CAJA</span>
+                            <span>CAJA-01 · YR</span>
+                        </div>
+                        <div style="margin-top: 16px; display: flex; align-items: center; gap: 8px;">
+                            <div class="semaphore__indicator semaphore__indicator--green"></div>
+                            <span class="text-success">Semáforo VERDE</span>
+                        </div>
+                    </div>
+                    
+                    <div style="background: var(--surface); border-radius: 8px; padding: 16px;">
+                        <div style="display: flex; align-items: flex-start; gap: 12px;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-gold)" stroke-width="2" style="margin-top: 2px;">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            </svg>
+                            <div>
+                                <strong>Trazabilidad</strong>
+                                <p style="font-size: 0.875rem; color: var(--text-secondary);">
+                                    Art. 11 - Ley 23/2015 · Expediente inmutable al confirmar · Retención 5 años
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal__footer">
+                <button class="btn btn--secondary" id="buyinBack" onclick="buyinBack()" style="display: none;">Volver</button>
+                <button class="btn btn--ghost" onclick="closeModal('buyinModal')">Pausar y atender siguiente</button>
+                <button class="btn btn--primary" id="buyinNext" onclick="buyinNext()">Continuar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cash-out Modal -->
+    <div id="cashoutModal" class="modal-overlay">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal__header">
+                <h2 class="modal__title text-gold">Cash-out — Canje de tickets</h2>
+                <button class="modal__close" onclick="closeModal('cashoutModal')">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal__body">
+                <p style="margin-bottom: 24px; color: var(--text-secondary);">
+                    Verifica autenticidad del ticket. KYC al mismo umbral de <strong>$2,000</strong>.
+                </p>
+                
+                <!-- Tickets -->
+                <div class="form-group">
+                    <label class="form-label" for="cashoutTickets">TICKETS RECIBIDOS</label>
+                    <ul class="ticket-list" style="background: var(--primary-dark); border-radius: 8px; overflow: hidden;">
+                        <li class="ticket-item">
+                            <span class="ticket-item__code">TKT-A47-2218</span>
+                            <span class="ticket-item__value">$1,800</span>
+                        </li>
+                        <li class="ticket-item">
+                            <span class="ticket-item__code">TKT-A47-2241</span>
+                            <span class="ticket-item__value">$950</span>
+                        </li>
+                        <li class="ticket-item">
+                            <span class="ticket-item__code">TKT-A47-2253</span>
+                            <span class="ticket-item__value">$250</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Resumen -->
+                <div class="receipt mb-lg">
+                    <div class="receipt__row">
+                        <span>Subtotal</span>
+                        <span class="font-mono">$3,000.00</span>
+                    </div>
+                    <div class="receipt__row">
+                        <span>Comisión (1.5%)</span>
+                        <span class="font-mono">-$45.00</span>
+                    </div>
+                    <div class="receipt__row" style="border-top: 1px dashed var(--border); padding-top: 12px; margin-top: 12px;">
+                        <strong>Neto a entregar</strong>
+                        <strong class="text-gold">$2,955.00</strong>
+                    </div>
+                </div>
+                
+                <!-- Cliente -->
+                <div class="form-group">
+                    <label class="form-label" for="cashoutClient">IDENTIFICACIÓN DEL CLIENTE</label>
+                    <div style="background: var(--surface); border-radius: 8px; padding: 16px;">
+                        <div style="display: flex; align-items: center; gap: 16px;">
+                            <div style="width: 48px; height: 48px; background: var(--accent-gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--primary-dark);">LE</div>
+                            <div>
+                                <strong>Luis Fernando Espinosa Quintero</strong>
+                                <p class="text-secondary" style="font-size: 0.875rem;">Céd. Panameña · 8-902-1547 · 38 años</p>
+                                <p class="font-mono" style="font-size: 0.75rem; color: var(--text-secondary);">Hash: a91c...f0e3</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Verificaciones -->
+                <div style="background: var(--surface); border-radius: 8px; padding: 16px; margin-top: 16px;">
+                    <h5 style="margin-bottom: 12px;">Verificaciones</h5>
+                    <ul style="list-style: none; font-size: 0.875rem;">
+                        <li style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--status-green)" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            3 tickets autenticados con firma válida
+                        </li>
+                        <li style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--status-green)" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            Suma > $2,000 — KYC aplicado
+                        </li>
+                        <li style="display: flex; align-items: center; gap: 8px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--status-green)" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            Semáforo VERDE — sin coincidencias
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal__footer">
+                <button class="btn btn--ghost" onclick="closeModal('cashoutModal')">Cancelar</button>
+                <button class="btn btn--primary">Confirmar — Entregar $2,955</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Receipt Modal -->
+    <div id="receiptModal" class="modal-overlay">
+        <div class="modal" style="max-width: 400px;">
+            <div class="modal__header">
+                <h2 class="modal__title">Comprobante</h2>
+                <button class="modal__close" onclick="closeModal('receiptModal')">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal__body">
+                <div class="receipt">
+                    <div class="receipt__header">
+                        <div class="receipt__title text-gold">CASINODESK · BUY-IN</div>
+                        <div class="receipt__id">TX-2026-04212 · 14-MAY-2026 22:54</div>
+                    </div>
+                    <div class="receipt__row">
+                        <span>Caja</span>
+                        <span>CAJA-01 · YR</span>
+                    </div>
+                    <div class="receipt__row">
+                        <span>Cliente</span>
+                        <span>R. Mendoza · 8-345-0712</span>
+                    </div>
+                    <div class="receipt__row">
+                        <span>Semáforo</span>
+                        <span class="badge badge--green">VERDE</span>
+                    </div>
+                    <div class="receipt__row" style="border-top: 1px dashed var(--border); padding-top: 12px; margin-top: 12px;">
+                        <strong>TOTAL</strong>
+                        <strong class="text-gold">$11,000.00</strong>
+                    </div>
+                    <div class="receipt__footer">
+                        ★ RTE GENERADO · ART. 53 ★<br>
+                        Conservar este comprobante. EXP-2026-04212-001
+                    </div>
+                </div>
+            </div>
+            <div class="modal__footer">
+                <button class="btn btn--secondary" onclick="window.print()">Imprimir</button>
+                <button class="btn btn--primary" onclick="closeModal('receiptModal')">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

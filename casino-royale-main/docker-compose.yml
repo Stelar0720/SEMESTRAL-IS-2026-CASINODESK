@@ -1,0 +1,25 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: apps/backend/CasinoDesk.Api/Dockerfile
+    container_name: casinodesk-backend
+    ports:
+      - "5067:5067"
+    environment:
+      Jwt__SigningKey: ${JWT_SIGNING_KEY:-CasinoDesk-Demo-Only-2026-Replace-Outside-University-Environment}
+    volumes:
+      - casinodesk-data:/app/data
+
+  frontend:
+    build:
+      context: .
+      dockerfile: apps/frontend/Dockerfile
+    container_name: casinodesk-frontend
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"
+
+volumes:
+  casinodesk-data:
