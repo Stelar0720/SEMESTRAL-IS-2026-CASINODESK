@@ -43,6 +43,13 @@ export const roleCapabilities: Record<Role, RoleCapability> = {
   }
 };
 
+export const roleDisplayNames: Record<Role, string> = {
+  Cajero: "Cajero",
+  Oficial: "Oficial de Cumplimiento",
+  Supervisor: "Supervisor de Mesa",
+  Administrador: "Administrador"
+};
+
 export function getRoleHome(role: Role) {
   switch (role) {
     case "Oficial":
