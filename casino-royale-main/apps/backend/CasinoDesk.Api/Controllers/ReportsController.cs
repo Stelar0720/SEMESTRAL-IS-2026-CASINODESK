@@ -245,5 +245,5 @@ public sealed class ReportsController : ControllerBase
         return Content(html, "text/html", Encoding.UTF8);
     }
 
-    private static string Csv(string value) => $"\"{value.Replace(\"\\\"\", \"\\\"\\\"\")}\"";
+    private static string Csv(string value) => $"\"{value.Replace("\"", "\"\"")}\"";
 }
