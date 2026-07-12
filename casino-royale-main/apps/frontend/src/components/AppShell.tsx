@@ -4,7 +4,7 @@ import {
 } from "lucide-react";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { NavLink, Outlet, useNavigate, useOutletContext } from "react-router-dom";
-import { getRoleBadge, getRoleHome, roleCapabilities } from "../app/roles";
+import { getRoleBadge, getRoleHome, roleCapabilities, roleDisplayNames } from "../app/roles";
 import { useAppStore } from "../app/store";
 import { BuyInModal, CashOutModal, ManualAlertModal, ReceiptModal } from "./TransactionModals";
 import type { Role } from "../app/types";
@@ -222,7 +222,7 @@ export function AppShell() {
               <div className="header__user-avatar">{session.initials}</div>
               <div className="header__user-info">
                 <span className="header__user-name">{session.fullName}</span>
-                <span className="header__user-role">{session.role}</span>
+                <span className="header__user-role">{roleDisplayNames[session.role]}</span>
               </div>
             </NavLink>
 
