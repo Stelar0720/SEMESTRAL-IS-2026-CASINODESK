@@ -102,6 +102,9 @@ interface ProspectDetailsState {
   monthlyIncomeRange: string;
   expectedGamingFrequency: string;
   relationshipPurpose: string;
+  sourceOfWealth: string;
+  actsOnOwnBehalf: boolean;
+  thirdPartyDetails: string;
   isPep: boolean;
   pepRelationship: string;
   clientDeclarationAccepted: boolean;
@@ -124,6 +127,9 @@ const INITIAL_PROSPECT_DETAILS: ProspectDetailsState = {
   monthlyIncomeRange: "2000-5000",
   expectedGamingFrequency: "Mensual",
   relationshipPurpose: "Entretenimiento",
+  sourceOfWealth: "Ahorros y actividad comercial declarada",
+  actsOnOwnBehalf: true,
+  thirdPartyDetails: "",
   isPep: false,
   pepRelationship: "",
   clientDeclarationAccepted: false
@@ -359,6 +365,12 @@ function Step2Content({
         <div className="form-group"><label className="form-label" htmlFor="bi-income">INGRESO MENSUAL</label><select className="form-input" id="bi-income" value={details.monthlyIncomeRange} onChange={(event) => updateDetail("monthlyIncomeRange", event.target.value)}><option value="0-2000">Hasta 2,000</option><option value="2000-5000">2,000 - 5,000</option><option value="5000-10000">5,000 - 10,000</option><option value="10000+">Mas de 10,000</option></select></div>
         <div className="form-group"><label className="form-label" htmlFor="bi-frequency">FRECUENCIA ESPERADA</label><select className="form-input" id="bi-frequency" value={details.expectedGamingFrequency} onChange={(event) => updateDetail("expectedGamingFrequency", event.target.value)}><option value="Ocasional">Ocasional</option><option value="Mensual">Mensual</option><option value="Semanal">Semanal</option><option value="Frecuente">Frecuente</option></select></div>
         <div className="form-group"><label className="form-label" htmlFor="bi-purpose">PROPOSITO DE LA RELACION</label><input className="form-input" id="bi-purpose" value={details.relationshipPurpose} onChange={(event) => updateDetail("relationshipPurpose", event.target.value)} /></div>
+        <div className="form-group"><label className="form-label" htmlFor="bi-wealth">ORIGEN DEL PATRIMONIO</label><input className="form-input" id="bi-wealth" placeholder="Ahorros, herencia, venta de bienes, negocios..." value={details.sourceOfWealth} onChange={(event) => updateDetail("sourceOfWealth", event.target.value)} /></div>
+      </div>
+
+      <div className="form-group">
+        <label className="radio-option"><input type="checkbox" checked={details.actsOnOwnBehalf} onChange={(event) => updateDetail("actsOnOwnBehalf", event.target.checked)} /><span className="radio-option__label">El cliente declara actuar en nombre y por cuenta propia (beneficiario final)</span></label>
+        {!details.actsOnOwnBehalf ? <input className="form-input" aria-label="Detalle del tercero o beneficiario final" placeholder="Nombre, documento y relacion del tercero o beneficiario final" value={details.thirdPartyDetails} onChange={(event) => updateDetail("thirdPartyDetails", event.target.value)} /> : null}
       </div>
 
       <div className="form-group">
@@ -565,7 +577,7 @@ export function BuyInModal({
         form.documentNumber, form.name, form.nationality, form.residenceCountry,
         form.details.issuingCountry, form.details.birthDate, form.details.documentExpiresAt,
         form.details.address, form.details.phone, form.details.occupation,
-        form.details.economicActivity, form.details.monthlyIncomeRange, form.originOfFunds
+        form.details.economicActivity, form.details.monthlyIncomeRange, form.details.sourceOfWealth, form.originOfFunds
       ];
       if (requiredValues.some((value) => !value.trim())) {
         setScreeningMessage("Completa los campos obligatorios de identidad, contacto y perfil economico.");
@@ -577,6 +589,10 @@ export function BuyInModal({
       }
       if (form.details.isPep && !form.details.pepRelationship.trim()) {
         setScreeningMessage("Documenta el cargo, institucion o relacion que origina la condicion PEP.");
+        return;
+      }
+      if (!form.details.actsOnOwnBehalf && !form.details.thirdPartyDetails.trim()) {
+        setScreeningMessage("Identifica al tercero o beneficiario final por el que actua el cliente.");
         return;
       }
       if (requiresRte && !form.details.clientDeclarationAccepted) {
@@ -638,7 +654,10 @@ export function BuyInModal({
           expectedGamingAmount: form.amount,
           expectedGamingFrequency: form.details.expectedGamingFrequency,
           sourceOfFunds: form.originOfFunds,
+          sourceOfWealth: form.details.sourceOfWealth,
           relationshipPurpose: form.details.relationshipPurpose,
+          actsOnOwnBehalf: form.details.actsOnOwnBehalf,
+          thirdPartyDetails: form.details.thirdPartyDetails,
           isPep: form.details.isPep,
           pepRelationship: form.details.pepRelationship,
           riskLevel: riskMap[form.riskLevel],

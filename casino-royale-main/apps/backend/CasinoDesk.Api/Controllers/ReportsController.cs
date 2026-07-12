@@ -29,11 +29,13 @@ public sealed class ReportsController : ControllerBase
         var end = to ?? DateTimeOffset.UtcNow;
         var transactions = _repository.Transactions.Where(item => item.CreatedAt >= start && item.CreatedAt <= end).ToArray();
         var alerts = _repository.Alerts.Where(item => item.CreatedAt >= start && item.CreatedAt <= end).ToArray();
+        var prospects = _prospects.GetProspects();
         return Ok(new
         {
             generatedAt = DateTimeOffset.UtcNow,
             period = new { from = start, to = end },
-            prospects = _prospects.GetProspects().Count,
+            prospects = prospects.Count,
+            pepProspects = prospects.Count(item => item.IsPep),
             transactions = transactions.Length,
             totalAmount = transactions.Sum(item => item.Amount),
             blockedTransactions = transactions.Count(item => item.Status == TransactionStatus.Bloqueada),
@@ -43,9 +45,86 @@ public sealed class ReportsController : ControllerBase
             sentRte = _repository.Rtes.Count(item => item.Status == "ENVIADO"),
             draftRos = _repository.Ros.Count(item => item.Status == "BORRADOR"),
             sentRos = _repository.Ros.Count(item => item.Status == "ENVIADO"),
-            riskDistribution = _prospects.GetProspects().GroupBy(item => item.RiskLevel.ToString())
+            riskDistribution = prospects.GroupBy(item => item.RiskLevel.ToString())
                 .ToDictionary(group => group.Key, group => group.Count())
         });
+    }
+
+    [HttpGet("due-diligence")]
+    public IActionResult DueDiligence([FromQuery] string format = "html")
+    {
+        var prospects = _prospects.GetProspects();
+        var headers = new[]
+        {
+            "Prospecto", "Documento", "Riesgo", "Score", "PEP", "Actua por cuenta propia",
+            "Origen de fondos", "Origen del patrimonio", "Estado", "Actualizado"
+        };
+        var rows = prospects.Select(prospect => new[]
+        {
+            $"{prospect.FirstNames} {prospect.LastNames}".Trim(),
+            prospect.DocumentNumberMasked,
+            prospect.RiskLevel.ToString(),
+            $"{prospect.RiskScore}/100",
+            prospect.IsPep ? $"SI ({prospect.PepRelationship})" : "NO",
+            prospect.ActsOnOwnBehalf ? "SI" : $"NO — {prospect.ThirdPartyDetails}",
+            prospect.SourceOfFunds,
+            prospect.SourceOfWealth,
+            prospect.Status,
+            prospect.UpdatedAt.ToString("yyyy-MM-dd HH:mm")
+        }).ToArray();
+        return RenderTable(format, "DD-Prospectos", "Reporte de debida diligencia de prospectos", headers, rows);
+    }
+
+    [HttpGet("pep")]
+    public IActionResult PepClients([FromQuery] string format = "html")
+    {
+        var peps = _prospects.GetProspects().Where(prospect => prospect.IsPep).ToArray();
+        var headers = new[] { "Prospecto", "Documento", "Relacion o cargo PEP", "Riesgo", "Origen de fondos", "Origen del patrimonio", "Estado" };
+        var rows = peps.Select(prospect => new[]
+        {
+            $"{prospect.FirstNames} {prospect.LastNames}".Trim(),
+            prospect.DocumentNumberMasked,
+            prospect.PepRelationship,
+            prospect.RiskLevel.ToString(),
+            prospect.SourceOfFunds,
+            prospect.SourceOfWealth,
+            prospect.Status
+        }).ToArray();
+        return RenderTable(format, "DD-PEP", "Clientes PEP bajo debida diligencia reforzada", headers, rows);
+    }
+
+    [HttpGet("threshold")]
+    public IActionResult ThresholdTransactions(
+        [FromQuery] DateTimeOffset? from,
+        [FromQuery] DateTimeOffset? to,
+        [FromQuery] decimal threshold = 10000,
+        [FromQuery] string format = "html")
+    {
+        var start = from ?? DateTimeOffset.UtcNow.AddDays(-30);
+        var end = to ?? DateTimeOffset.UtcNow;
+        var transactions = _repository.Transactions
+            .Where(item => item.CreatedAt >= start && item.CreatedAt <= end && item.Amount >= threshold)
+            .OrderByDescending(item => item.Amount)
+            .ToArray();
+        var headers = new[] { "Fecha", "Tipo", "Cliente", "Hash", "Monto", "Instrumento", "Riesgo", "Estado", "RTE requerido" };
+        var rows = transactions.Select(item => new[]
+        {
+            item.CreatedAt.ToString("yyyy-MM-dd HH:mm"),
+            item.Type.ToString(),
+            item.ClientName,
+            item.ClientHash,
+            item.Amount.ToString("0.00"),
+            item.PaymentMethod.ToString(),
+            item.RiskLevel.ToString(),
+            item.Status.ToString(),
+            item.RequiresRte ? "SI" : "NO"
+        }).ToArray();
+        return RenderTable(
+            format,
+            "DD-Umbral",
+            $"Transacciones iguales o mayores a {threshold:0.00} ({start:yyyy-MM-dd} a {end:yyyy-MM-dd})",
+            headers,
+            rows);
     }
 
     [HttpGet("prospects/{id:guid}")]
@@ -63,7 +142,9 @@ public sealed class ReportsController : ControllerBase
             ("Nacimiento", prospect.BirthDate?.ToString("yyyy-MM-dd") ?? "No indicado"),
             ("Ocupacion", prospect.Occupation), ("Empleador", prospect.Employer),
             ("Actividad economica", prospect.EconomicActivity), ("Ingresos", prospect.MonthlyIncomeRange),
-            ("Origen de fondos", prospect.SourceOfFunds), ("Condicion PEP", prospect.IsPep ? prospect.PepRelationship : "NO"),
+            ("Origen de fondos", prospect.SourceOfFunds), ("Origen del patrimonio", prospect.SourceOfWealth),
+            ("Actua por cuenta propia", prospect.ActsOnOwnBehalf ? "SI" : $"NO — {prospect.ThirdPartyDetails}"),
+            ("Condicion PEP", prospect.IsPep ? prospect.PepRelationship : "NO"),
             ("Riesgo", $"{prospect.RiskLevel} ({prospect.RiskScore}/100)"), ("Estado", prospect.Status),
             ("Transacciones relacionadas", transactions.Length.ToString()), ("Monto acumulado", transactions.Sum(item => item.Amount).ToString("0.00")),
             ("Alertas", alerts.Length.ToString()), ("Evidencias", evidence.Count.ToString()),
@@ -136,6 +217,30 @@ public sealed class ReportsController : ControllerBase
             <style>body{font-family:Arial,sans-serif;margin:36px;color:#202124}h1{color:#8a6500}.notice{padding:12px;background:#fff4cc;border:1px solid #d4af37}table{width:100%;border-collapse:collapse;margin-top:20px}th,td{border:1px solid #ccc;padding:9px;text-align:left;vertical-align:top}th{width:30%;background:#f5f5f0}@media print{button{display:none} }</style></head>
             <body><h1>{{WebUtility.HtmlEncode(title)}}</h1><p class="notice">Documento generado por CasinoDesk. Integraciones gubernamentales y envio UAF simulados para demostracion academica.</p>
             <button onclick="window.print()">Imprimir / Guardar como PDF</button><table>{{rows}}</table><p>Generado: {{DateTimeOffset.UtcNow:O}}</p></body></html>
+            """;
+        return Content(html, "text/html", Encoding.UTF8);
+    }
+
+    private IActionResult RenderTable(string format, string fileName, string title, IReadOnlyList<string> headers, IReadOnlyList<string[]> rows)
+    {
+        if (string.Equals(format, "csv", StringComparison.OrdinalIgnoreCase))
+        {
+            var csv = new StringBuilder(string.Join(',', headers.Select(Csv)) + "\r\n");
+            foreach (var row in rows) csv.Append(string.Join(',', row.Select(Csv))).Append("\r\n");
+            return File(Encoding.UTF8.GetPreamble().Concat(Encoding.UTF8.GetBytes(csv.ToString())).ToArray(), "text/csv", $"{fileName}.csv");
+        }
+        if (!string.Equals(format, "html", StringComparison.OrdinalIgnoreCase))
+            throw new ArgumentException("Formato permitido: html o csv.");
+
+        var head = string.Join("", headers.Select(header => $"<th>{WebUtility.HtmlEncode(header)}</th>"));
+        var body = rows.Count == 0
+            ? $"<tr><td colspan=\"{headers.Count}\">Sin registros para el criterio seleccionado.</td></tr>"
+            : string.Join("", rows.Select(row => $"<tr>{string.Join("", row.Select(cell => $"<td>{WebUtility.HtmlEncode(cell)}</td>"))}</tr>"));
+        var html = $$"""
+            <!doctype html><html lang="es"><head><meta charset="utf-8"><title>{{WebUtility.HtmlEncode(title)}}</title>
+            <style>body{font-family:Arial,sans-serif;margin:36px;color:#202124}h1{color:#8a6500}.notice{padding:12px;background:#fff4cc;border:1px solid #d4af37}table{width:100%;border-collapse:collapse;margin-top:20px}th,td{border:1px solid #ccc;padding:8px;text-align:left;vertical-align:top}th{background:#f5f5f0}@media print{button{display:none} }</style></head>
+            <body><h1>{{WebUtility.HtmlEncode(title)}}</h1><p class="notice">Documento generado por CasinoDesk. Integraciones gubernamentales y envio UAF simulados para demostracion academica.</p>
+            <button onclick="window.print()">Imprimir / Guardar como PDF</button><table><thead><tr>{{head}}</tr></thead><tbody>{{body}}</tbody></table><p>Generado: {{DateTimeOffset.UtcNow:O}} · Registros: {{rows.Count}}</p></body></html>
             """;
         return Content(html, "text/html", Encoding.UTF8);
     }

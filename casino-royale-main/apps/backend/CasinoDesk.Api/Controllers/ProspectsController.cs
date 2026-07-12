@@ -65,7 +65,10 @@ public sealed class ProspectsController : ControllerBase
             ExpectedGamingAmount = request.ExpectedGamingAmount,
             ExpectedGamingFrequency = Clean(request.ExpectedGamingFrequency),
             SourceOfFunds = Clean(request.SourceOfFunds),
+            SourceOfWealth = Clean(request.SourceOfWealth),
             RelationshipPurpose = Clean(request.RelationshipPurpose),
+            ActsOnOwnBehalf = request.ActsOnOwnBehalf ?? true,
+            ThirdPartyDetails = Clean(request.ThirdPartyDetails),
             IsPep = request.IsPep,
             PepRelationship = Clean(request.PepRelationship),
             RiskLevel = request.RiskLevel,
@@ -104,6 +107,8 @@ public sealed class ProspectsController : ControllerBase
             throw new ArgumentException("El prospecto debe ser mayor de edad.");
         if (request.IsPep && string.IsNullOrWhiteSpace(request.PepRelationship))
             throw new ArgumentException("Debe documentar la relacion o condicion PEP.");
+        if (request.ActsOnOwnBehalf == false && string.IsNullOrWhiteSpace(request.ThirdPartyDetails))
+            throw new ArgumentException("Debe identificar al tercero o beneficiario final cuando el prospecto no actua por cuenta propia.");
         if (request.ExpectedGamingAmount < 0)
             throw new ArgumentException("El monto esperado no puede ser negativo.");
     }
