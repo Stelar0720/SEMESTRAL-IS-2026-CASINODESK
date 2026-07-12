@@ -117,7 +117,10 @@ public sealed class ProspectRecord
     public decimal ExpectedGamingAmount { get; set; }
     public string ExpectedGamingFrequency { get; set; } = string.Empty;
     public string SourceOfFunds { get; set; } = string.Empty;
+    public string SourceOfWealth { get; set; } = string.Empty;
     public string RelationshipPurpose { get; set; } = string.Empty;
+    public bool ActsOnOwnBehalf { get; set; } = true;
+    public string ThirdPartyDetails { get; set; } = string.Empty;
     public bool IsPep { get; set; }
     public string PepRelationship { get; set; } = string.Empty;
     public RiskLevel RiskLevel { get; set; } = RiskLevel.Verde;
