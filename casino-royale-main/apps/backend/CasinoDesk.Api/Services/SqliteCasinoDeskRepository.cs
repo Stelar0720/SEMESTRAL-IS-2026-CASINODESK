@@ -315,7 +315,9 @@ public sealed class SqliteCasinoDeskRepository : ICasinoDeskRepository, IProspec
         Email = source.Email, Occupation = source.Occupation, Employer = source.Employer,
         EconomicActivity = source.EconomicActivity, MonthlyIncomeRange = source.MonthlyIncomeRange,
         ExpectedGamingAmount = source.ExpectedGamingAmount, ExpectedGamingFrequency = source.ExpectedGamingFrequency,
-        SourceOfFunds = source.SourceOfFunds, RelationshipPurpose = source.RelationshipPurpose,
+        SourceOfFunds = source.SourceOfFunds, SourceOfWealth = source.SourceOfWealth,
+        RelationshipPurpose = source.RelationshipPurpose,
+        ActsOnOwnBehalf = source.ActsOnOwnBehalf, ThirdPartyDetails = source.ThirdPartyDetails,
         IsPep = source.IsPep, PepRelationship = source.PepRelationship, RiskLevel = source.RiskLevel,
         RiskScore = source.RiskScore, Status = source.Status, CreatedAt = createdAt, UpdatedAt = DateTimeOffset.UtcNow
     };
