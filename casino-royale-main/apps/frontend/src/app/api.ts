@@ -343,7 +343,10 @@ export type ProspectPayload = {
   expectedGamingAmount: number;
   expectedGamingFrequency?: string;
   sourceOfFunds?: string;
+  sourceOfWealth?: string;
   relationshipPurpose?: string;
+  actsOnOwnBehalf?: boolean;
+  thirdPartyDetails?: string;
   isPep: boolean;
   pepRelationship?: string;
   riskLevel: "Verde" | "Amarillo" | "Rojo";
